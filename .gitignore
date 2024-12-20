@@ -1,0 +1,28 @@
+# CMake folders
+CMakeFiles
+# CMake files
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+CMakeDoxyfile.in
+CMakeDoxygenDefaults.cmake
+
+# ImGui
+imgui.ini
+
+# folder
+docs/html/
+docs/latex/
+lib/
+!external/lib/
+bin/
+obj/
+axolote-engine/
+logs/
+build/
+.vscode/
+.clangd/
+.cache/
+
+# files
+compile_commands.json
