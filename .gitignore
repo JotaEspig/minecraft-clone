@@ -11,18 +11,23 @@ CMakeDoxygenDefaults.cmake
 imgui.ini
 
 # folder
-docs/html/
-docs/latex/
+docs/html
+docs/latex
 lib/
-!external/lib/
 bin/
 obj/
-axolote-engine/
 logs/
 build/
 .vscode/
 .clangd/
 .cache/
+__pycache__/
+axolote-engine/
+external/include/axolote
+external/include/KHR
+external/include/KHR
+external/imgui
+external/lib/axolote
 
 # files
 compile_commands.json
