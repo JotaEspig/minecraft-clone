@@ -12,11 +12,12 @@
 
 // Pos, Color (vec4), Normal, TexCoord
 std::vector<glm::vec3> default_vertices = {
+    // 0.5 so each face has a length of 1
     // clang-format off
-    {-1.0f, -1.0f, 0.0f},
-    {1.0f, -1.0f, 0.0f},
-    {1.0f, 1.0f, 0.0f},
-    {-1.0f, 1.0f, 0.0f},
+    {-0.5f, -0.5f, 0.0f},
+    {0.5f, -0.5f, 0.0f},
+    {0.5f, 0.5f, 0.0f},
+    {-0.5f, 0.5f, 0.0f},
     // clang-format on
 };
 

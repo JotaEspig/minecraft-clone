@@ -55,7 +55,7 @@ void Chunk::update_vbos() {
             continue;
         }
         for (auto face : block.faces) {
-            instanced_positions.push_back(block.position + face.normal);
+            instanced_positions.push_back(block.position + face.normal * 0.5f);
             instanced_tex_coords.push_back(face.uv);
             instanced_normals.push_back(face.normal);
         }
