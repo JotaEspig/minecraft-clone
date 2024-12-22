@@ -5,7 +5,6 @@
 #include "axolote/window.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "minecraft/atlas_mapping_uvs.hpp"
 #include "minecraft/chunk.hpp"
 #include "minecraft/utils.hpp"
 
@@ -28,9 +27,6 @@ void App::process_input(double dt) {
 }
 
 void App::main_loop() {
-    // Setup atlas mapping uvs
-    atlas_mapping_uvs = read_from_file();
-
     auto post_processing_shader = axolote::gl::Shader::create(
         my_get_path(
             "./resources/shaders/post_processing_base_vertex_shader.glsl"

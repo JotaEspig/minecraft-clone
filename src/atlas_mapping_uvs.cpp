@@ -30,4 +30,8 @@ std::unordered_map<std::string, glm::vec4> read_from_file() {
     return atlas_mapping_uvs;
 }
 
-std::unordered_map<std::string, glm::vec4> atlas_mapping_uvs;
+const std::unordered_map<std::string, glm::vec4> &get_atlas_mapping_uvs() {
+    static std::unordered_map<std::string, glm::vec4> atlas_mapping_uvs
+        = read_from_file();
+    return atlas_mapping_uvs;
+}

@@ -58,7 +58,7 @@ Face::Face() {
 Face::Face(std::string type) {
     init();
 
-    glm::vec4 uv_for_type = atlas_mapping_uvs.at(type);
+    glm::vec4 uv_for_type = get_atlas_mapping_uvs().at(type);
     Direction direction = get_direction_from_string(type);
     normal = get_normal_from_direction(direction);
 
