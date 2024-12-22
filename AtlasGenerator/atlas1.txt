@@ -1,0 +1,6 @@
+grass_back 0.0 0.0 0.016 0.016
+grass_bottom 0.021 0.0 0.016 0.016
+grass_front 0.042 0.0 0.016 0.016
+grass_left 0.063 0.0 0.016 0.016
+grass_right 0.084 0.0 0.016 0.016
+grass_top 0.105 0.0 0.016 0.016

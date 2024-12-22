@@ -1,5 +1,7 @@
 # Compiling the code
 
+axolote 0.9.0
+
 Create a directory for the build files and enter it.
 ```bash
 mkdir build
@@ -26,9 +28,13 @@ The executable will be in the `bin` directory. run it.
 
 On Linux:
 ```bash
-./bin/exe-test
+./bin/minecraft
 ```
 On Windows:
 ```bash
-.\bin\Release\exe-test.exe
+.\bin\Release\minecraft.exe
 ```
+
+# Acknowledgements
+
+* [Texture Atlas Generator](https://github.com/lukaszdk/texture-atlas-generator)
