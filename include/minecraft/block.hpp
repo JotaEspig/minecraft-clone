@@ -1,17 +1,19 @@
 #pragma once
 
-#include "minecraft/face.hpp"
 #include <string>
+#include <array>
 
 #include <glm/glm.hpp>
 
+#include "minecraft/face.hpp"
+#include "minecraft/atlas_mapping_uvs.hpp"
+
 class Block {
 public:
-    glm::vec3 position;
-    std::string type;
+    BlockType type;
 
-    std::vector<Face> faces{6};
+    std::array<Face::Direction, 6> faces_directions;
 
     Block();
-    Block(glm::vec3 position, std::string type);
+    Block(BlockType type);
 };

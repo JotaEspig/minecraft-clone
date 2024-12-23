@@ -1,17 +1,15 @@
 #include "minecraft/block.hpp"
 
 Block::Block() :
-  position{glm::vec3{0.0f, 0.0f, 0.0f}},
-  type{"air"} {
+  type{BlockType::AIR} {
+    faces_directions.fill(Face::Direction::INVALID);
 }
 
-Block::Block(glm::vec3 position, std::string type) :
-  position{position},
-  type{type} {
-    faces[0] = Face{type + "_top"};
-    faces[1] = Face{type + "_bottom"};
-    faces[2] = Face{type + "_left"};
-    faces[3] = Face{type + "_right"};
-    faces[4] = Face{type + "_front"};
-    faces[5] = Face{type + "_back"};
+Block::Block(BlockType type) : type{type} {
+    faces_directions[0] = Face::Direction::TOP;
+    faces_directions[1] = Face::Direction::BOTTOM;
+    faces_directions[2] = Face::Direction::LEFT;
+    faces_directions[3] = Face::Direction::RIGHT;
+    faces_directions[4] = Face::Direction::FRONT;
+    faces_directions[5] = Face::Direction::BACK;
 }
