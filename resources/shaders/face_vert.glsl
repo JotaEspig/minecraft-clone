@@ -20,20 +20,29 @@ void main() {
     float cos_theta = dot(original_normal, target_normal);
     float angle = acos(clamp(cos_theta, -1.0, 1.0));
 
-    // Compute the rotation matrix using the axis-angle formula
-    float sin_theta = sin(angle);
     mat3 rotation_matrix;
-    if (length(rotation_axis) > 0.0001) { // Avoid division by zero
-        rotation_axis = normalize(rotation_axis);
-        float x = rotation_axis.x, y = rotation_axis.y, z = rotation_axis.z;
 
+    if (target_normal == vec3(0.0, 0.0, -1.0)) {
+        // Special case: target is (0, 0, -1), rotate 180° around the y-axis
         rotation_matrix = mat3(
-                cos_theta + x * x * (1.0 - cos_theta), y * x * (1.0 - cos_theta) + z * sin_theta, z * x * (1.0 - cos_theta) - y * sin_theta,
-                x * y * (1.0 - cos_theta) - z * sin_theta, cos_theta + y * y * (1.0 - cos_theta), z * y * (1.0 - cos_theta) + x * sin_theta,
-                x * z * (1.0 - cos_theta) + y * sin_theta, y * z * (1.0 - cos_theta) - x * sin_theta, cos_theta + z * z * (1.0 - cos_theta)
-            );
+            -1.0,  0.0,  0.0,
+             0.0,  1.0,  0.0,
+             0.0,  0.0, -1.0
+        );
+    } else if (length(rotation_axis) > 0.0001) {
+        // General case: apply axis-angle rotation
+        rotation_axis = normalize(rotation_axis);
+        float sin_theta = sin(angle);
+        float cos_theta = cos(angle);
+
+        float x = rotation_axis.x, y = rotation_axis.y, z = rotation_axis.z;
+        rotation_matrix = mat3(
+            cos_theta + x * x * (1.0 - cos_theta), y * x * (1.0 - cos_theta) + z * sin_theta, z * x * (1.0 - cos_theta) - y * sin_theta,
+            x * y * (1.0 - cos_theta) - z * sin_theta, cos_theta + y * y * (1.0 - cos_theta), z * y * (1.0 - cos_theta) + x * sin_theta,
+            x * z * (1.0 - cos_theta) + y * sin_theta, y * z * (1.0 - cos_theta) - x * sin_theta, cos_theta + z * z * (1.0 - cos_theta)
+        );
     } else {
-        // If the rotation axis is zero, no rotation is needed
+        // No rotation needed
         rotation_matrix = mat3(1.0);
     }
 
@@ -56,3 +65,4 @@ void main() {
         tex_coord = instanced_tex_coord.xw;
     }
 }
+

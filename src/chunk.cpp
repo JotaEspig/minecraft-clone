@@ -12,6 +12,9 @@
 #include "minecraft/chunk.hpp"
 #include "minecraft/face.hpp"
 #include "minecraft/utils.hpp"
+#include "minecraft/frustum_cull.hpp"
+
+Frustum Chunk::frustum{};
 
 Chunk::Chunk() :
   Chunk{glm::vec3{0.0f}} {
@@ -176,6 +179,13 @@ void Chunk::update(double dt) {
 }
 
 void Chunk::draw() {
+    glm::vec3 minp = pos * glm::vec3{CHUNK_XZ_SIZE, CHUNK_Y_SIZE, CHUNK_XZ_SIZE};
+    glm::vec3 maxp
+        = minp + glm::vec3{CHUNK_XZ_SIZE, CHUNK_Y_SIZE, CHUNK_XZ_SIZE};
+    if (!frustum.IsBoxVisible(minp, maxp)) {
+        return; 
+    }
+
     shader->use();
     texture->bind();
     texture->activate();

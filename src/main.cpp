@@ -17,6 +17,7 @@
 #include "minecraft/chunk.hpp"
 #include "minecraft/utils.hpp"
 #include "minecraft/atlas_mapping_uvs.hpp"
+#include "minecraft/frustum_cull.hpp"
 
 class App : public axolote::Window {
 public:
@@ -65,13 +66,13 @@ void App::main_loop() {
     // Obligatory to disable CULL_FACE for the chunk, it's strange, seems like
     // OpenGL understands the face's in the wrong way, because it's being
     // rotated on shaders.
-    glDisable(GL_CULL_FACE);
+    //glDisable(GL_CULL_FACE);
     glLineWidth(2.0f);
 
     // Creates 16 chunks
     std::shared_ptr<Chunk> chunk;
-    for (int i = 0; i < 16; ++i) {
-        for (int j = 0; j < 16; ++j) {
+    for (int i = 0; i < 32; ++i) {
+        for (int j = 0; j < 32; ++j) {
             chunk = std::make_shared<Chunk>(glm::vec3{i, -1, j});
             chunk->bind_shader(face_shader);
             scene->add_drawable(chunk);
@@ -110,7 +111,7 @@ void App::main_loop() {
 
         ++accumulated_frames;
         delta_time_to_print_fps += dt;
-        if (delta_time_to_print_fps >= 5.0f) {
+        if (delta_time_to_print_fps >= 2.0f) {
             axolote::debug(
                 "FPS: %lf", accumulated_frames / delta_time_to_print_fps
             );
@@ -121,6 +122,8 @@ void App::main_loop() {
         process_input(dt);
 
         update_camera((float)width() / height());
+        Chunk::frustum = Frustum{current_scene()->context->camera.matrix()};
+
         update(delta_t);
 
         clear();

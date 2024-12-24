@@ -11,6 +11,7 @@
 #include <glm/glm.hpp>
 
 #include "minecraft/face.hpp"
+#include "minecraft/frustum_cull.hpp"
 
 constexpr unsigned long CHUNK_XZ_SIZE = 16;
 constexpr unsigned long CHUNK_Y_SIZE = 16;
@@ -41,6 +42,8 @@ public:
     std::shared_ptr<axolote::gl::VBO> instanced_tex_coord_vbo;
     // Instanced normal
     std::shared_ptr<axolote::gl::VBO> instanced_normal_vbo;
+
+    static Frustum frustum;
 
     glm::vec3 pos{0.0f};
     long long faces_to_draw_amount = 0;
