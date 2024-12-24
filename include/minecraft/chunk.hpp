@@ -10,10 +10,10 @@
 #include "axolote/gl/vbo.hpp"
 #include <glm/glm.hpp>
 
-#include "minecraft/block.hpp"
+#include "minecraft/face.hpp"
 
 constexpr unsigned long CHUNK_XZ_SIZE = 16;
-constexpr unsigned long CHUNK_Y_SIZE = 256;
+constexpr unsigned long CHUNK_Y_SIZE = 16;
 constexpr unsigned long long CHUNK_MAX_BLOCKS_AMOUNT
     = CHUNK_XZ_SIZE * CHUNK_Y_SIZE * CHUNK_XZ_SIZE;
 
@@ -22,7 +22,7 @@ constexpr unsigned long long CHUNK_MAX_BLOCKS_AMOUNT
 class Chunk : public axolote::Drawable {
 public:
     typedef std::array<
-        std::array<std::array<Block, CHUNK_XZ_SIZE>, CHUNK_Y_SIZE>, CHUNK_XZ_SIZE>
+        std::array<std::array<BlockType, CHUNK_XZ_SIZE>, CHUNK_Y_SIZE>, CHUNK_XZ_SIZE>
         Grid;
 
     // VAO
@@ -42,13 +42,8 @@ public:
     // Instanced normal
     std::shared_ptr<axolote::gl::VBO> instanced_normal_vbo;
 
-    std::vector<glm::vec3> instanced_positions;
-    std::vector<glm::vec4> instanced_tex_coords;
-    std::vector<glm::vec3> instanced_normals;
-
-    // This vec will be multiplied by CHUNK_XZ_SIZE, so if pos = {1, 0, 0}, the
-    // actual chunk position will be {CHUNK_XZ_SIZE, 0, 0}
     glm::vec3 pos{0.0f};
+    long long faces_to_draw_amount = 0;
     bool has_changed = true;
     Grid blocks;
 

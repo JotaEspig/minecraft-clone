@@ -14,7 +14,6 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "minecraft/block.hpp"
 #include "minecraft/chunk.hpp"
 #include "minecraft/utils.hpp"
 #include "minecraft/atlas_mapping_uvs.hpp"
@@ -70,9 +69,10 @@ void App::main_loop() {
     glLineWidth(2.0f);
 
     // Creates 16 chunks
+    std::shared_ptr<Chunk> chunk;
     for (int i = 0; i < 16; ++i) {
         for (int j = 0; j < 16; ++j) {
-            auto chunk = std::make_shared<Chunk>(glm::vec3{i, -1, j});
+            chunk = std::make_shared<Chunk>(glm::vec3{i, -1, j});
             chunk->bind_shader(face_shader);
             scene->add_drawable(chunk);
 
@@ -90,8 +90,7 @@ void App::main_loop() {
                         //         type = BlockType::GRASS;
                         //     }
                         // }
-                        Block block{type};
-                        chunk->blocks[x][y][z] = block;
+                        chunk->blocks[x][y][z] = type;
                     }
                 }
             }

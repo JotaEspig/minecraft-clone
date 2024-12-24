@@ -65,7 +65,7 @@ set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(
     SOURCE_FILES
     ${SOURCE_DIR}/atlas_mapping_uvs.cpp
-    ${SOURCE_DIR}/block.cpp
+    
     ${SOURCE_DIR}/chunk.cpp
     ${SOURCE_DIR}/face.cpp
     ${SOURCE_DIR}/main.cpp

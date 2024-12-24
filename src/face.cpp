@@ -1,9 +1,6 @@
-#include <memory>
-#include <string>
+#include <array>
 #include <vector>
 
-#include "axolote/gl/Texture.hpp"
-#include "axolote/gl/ebo.hpp"
 #include "axolote/gl/vao.hpp"
 #include "axolote/gl/vbo.hpp"
 #include "axolote/glad/glad.h"
@@ -26,6 +23,11 @@ const std::vector<glm::vec3> Face::vertices = {
 
 const std::vector<GLuint> Face::indices = {
     0, 1, 2, 2, 3, 0,
+};
+
+const std::array<Face::Direction, 6> Face::directions = {
+    Face::Direction::TOP,   Face::Direction::BOTTOM, Face::Direction::LEFT,
+    Face::Direction::RIGHT, Face::Direction::FRONT,  Face::Direction::BACK,
 };
 
 Face::Face() {

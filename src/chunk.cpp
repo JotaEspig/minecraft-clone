@@ -9,7 +9,6 @@
 #include <glm/glm.hpp>
 
 #include "minecraft/atlas_mapping_uvs.hpp"
-#include "minecraft/block.hpp"
 #include "minecraft/chunk.hpp"
 #include "minecraft/face.hpp"
 #include "minecraft/utils.hpp"
@@ -45,7 +44,7 @@ Chunk::Chunk(const glm::vec3 &pos) :
     instanced_position_vbo = axolote::gl::VBO::create();
     instanced_position_vbo->bind();
     instanced_position_vbo->buffer_data(
-        CHUNK_MAX_BLOCKS_AMOUNT * sizeof(glm::vec3), instanced_positions.data(),
+        CHUNK_MAX_BLOCKS_AMOUNT * sizeof(glm::vec3), 0,
         GL_DYNAMIC_DRAW
     );
     vao->link_attrib(
@@ -58,7 +57,7 @@ Chunk::Chunk(const glm::vec3 &pos) :
     instanced_tex_coord_vbo->bind();
     instanced_tex_coord_vbo->buffer_data(
         CHUNK_MAX_BLOCKS_AMOUNT * sizeof(glm::vec4),
-        instanced_tex_coords.data(), GL_DYNAMIC_DRAW
+        0, GL_DYNAMIC_DRAW
     );
     vao->link_attrib(
         instanced_tex_coord_vbo, 2, 4, GL_FLOAT, sizeof(glm::vec4), (void *)0
@@ -69,7 +68,7 @@ Chunk::Chunk(const glm::vec3 &pos) :
     instanced_normal_vbo = axolote::gl::VBO::create();
     instanced_normal_vbo->bind();
     instanced_normal_vbo->buffer_data(
-        CHUNK_MAX_BLOCKS_AMOUNT * sizeof(glm::vec3), instanced_normals.data(),
+        CHUNK_MAX_BLOCKS_AMOUNT * sizeof(glm::vec3), 0,
         GL_DYNAMIC_DRAW
     );
     vao->link_attrib(
@@ -86,8 +85,11 @@ void Chunk::update_vbos() {
     glm::vec3 chunk_pos
         = glm::vec3{CHUNK_XZ_SIZE, CHUNK_Y_SIZE, CHUNK_XZ_SIZE} * pos;
 
-    instanced_positions.clear();
-    instanced_normals.clear();
+
+    std::vector<glm::vec3> instanced_positions;
+    std::vector<glm::vec4> instanced_tex_coords;
+    std::vector<glm::vec3> instanced_normals;
+
     std::vector<std::pair<glm::vec3, Face>> drawable_faces
         = get_drawable_faces();
     for (const auto &[block_pos, face] : drawable_faces) {
@@ -98,21 +100,23 @@ void Chunk::update_vbos() {
         instanced_normals.push_back(face.normal);
     }
 
+    faces_to_draw_amount = instanced_positions.size();
+
     vao->bind();
     instanced_position_vbo->bind();
-    instanced_position_vbo->buffer_data(
-        instanced_positions.size() * sizeof(glm::vec3),
-        instanced_positions.data(), GL_DYNAMIC_DRAW
+    glBufferSubData(
+        GL_ARRAY_BUFFER, 0, instanced_positions.size() * sizeof(glm::vec3),
+        instanced_positions.data()
     );
     instanced_tex_coord_vbo->bind();
-    instanced_tex_coord_vbo->buffer_data(
-        instanced_tex_coords.size() * sizeof(glm::vec4),
-        instanced_tex_coords.data(), GL_DYNAMIC_DRAW
+    glBufferSubData(
+        GL_ARRAY_BUFFER, 0, instanced_tex_coords.size() * sizeof(glm::vec4),
+        instanced_tex_coords.data()
     );
     instanced_normal_vbo->bind();
-    instanced_normal_vbo->buffer_data(
-        instanced_normals.size() * sizeof(glm::vec3), instanced_normals.data(),
-        GL_DYNAMIC_DRAW
+    glBufferSubData(
+        GL_ARRAY_BUFFER, 0, instanced_normals.size() * sizeof(glm::vec3),
+        instanced_normals.data()
     );
     vao->unbind();
     instanced_position_vbo->unbind();
@@ -123,13 +127,13 @@ std::vector<std::pair<glm::vec3, Face>> Chunk::get_drawable_faces() const {
     for (int i = 0; i < CHUNK_XZ_SIZE; ++i) {
         for (int j = 0; j < CHUNK_Y_SIZE; ++j) {
             for (int k = 0; k < CHUNK_XZ_SIZE; ++k) {
-                Block block = blocks[i][j][k];
-                if (block.type == BlockType::AIR) {
+                BlockType block = blocks[i][j][k];
+                if (block == BlockType::AIR) {
                     continue;
                 }
                 glm::vec3 position = glm::vec3{i, j, k};
-                for (int l = 0; l < block.faces_directions.size(); ++l) {
-                    Face::Direction dir = block.faces_directions[l];
+                for (int l = 0; l < Face::directions.size(); ++l) {
+                    Face::Direction dir = Face::directions[l];
                     glm::vec3 normal = Face::get_normal_from_direction(dir);
                     bool is_facing_air = false;
                     int i2 = i + normal.x;
@@ -143,14 +147,12 @@ std::vector<std::pair<glm::vec3, Face>> Chunk::get_drawable_faces() const {
                     }
                     else {
                         is_facing_air
-                            = blocks[i2][j2][k2].type == BlockType::AIR;
+                            = blocks[i2][j2][k2] == BlockType::AIR;
                     }
-                    if (is_facing_air)
-                    {
-                        Face face = Face{block.type, dir};
+                    if (is_facing_air) {
+                        Face face = Face{block, dir};
                         faces.push_back({position, face});
                     }
-
                 }
             }
         }
@@ -180,7 +182,7 @@ void Chunk::draw() {
     shader->set_uniform_int("texture0", texture->unit());
     vao->bind();
     glDrawElementsInstanced(
-        GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, instanced_positions.size()
+        GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, faces_to_draw_amount
     );
     vao->unbind();
     texture->unbind();
