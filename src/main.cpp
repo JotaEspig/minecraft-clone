@@ -9,15 +9,14 @@
 #include "axolote/window.hpp"
 #define DEBUG
 #include "axolote/utils.hpp"
-#include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "minecraft/chunk.hpp"
-#include "minecraft/utils.hpp"
 #include "minecraft/atlas_mapping_uvs.hpp"
+#include "minecraft/chunk.hpp"
 #include "minecraft/frustum_cull.hpp"
+#include "minecraft/utils.hpp"
 
 class App : public axolote::Window {
 public:
@@ -66,7 +65,7 @@ void App::main_loop() {
     // Obligatory to disable CULL_FACE for the chunk, it's strange, seems like
     // OpenGL understands the face's in the wrong way, because it's being
     // rotated on shaders.
-    //glDisable(GL_CULL_FACE);
+    // glDisable(GL_CULL_FACE);
     glLineWidth(2.0f);
 
     // Creates 16 chunks
@@ -78,19 +77,19 @@ void App::main_loop() {
             scene->add_drawable(chunk);
 
             // Generate a chunk
-            for (int x = 0; x < CHUNK_XZ_SIZE; ++x) {
-                for (int y = 0; y < CHUNK_Y_SIZE; ++y) {
-                    for (int z = 0; z < CHUNK_XZ_SIZE; ++z) {
+            for (std::size_t x = 0; x < CHUNK_XZ_SIZE; ++x) {
+                for (std::size_t y = 0; y < CHUNK_Y_SIZE; ++y) {
+                    for (std::size_t z = 0; z < CHUNK_XZ_SIZE; ++z) {
                         BlockType type = BlockType::GRASS;
-                        // int bla = CHUNK_Y_SIZE - (CHUNK_Y_SIZE / 3);
-                        // if (y > bla) {
-                        //     if (std::rand() % (y - bla + 1)) {
-                        //         type = BlockType::AIR;
-                        //     }
-                        //     else {
-                        //         type = BlockType::GRASS;
-                        //     }
-                        // }
+                        int bla = CHUNK_Y_SIZE - (CHUNK_Y_SIZE / 3);
+                        if (y > bla) {
+                            if (std::rand() % (y - bla + 1)) {
+                                type = BlockType::AIR;
+                            }
+                            else {
+                                type = BlockType::GRASS;
+                            }
+                        }
                         chunk->blocks[x][y][z] = type;
                     }
                 }
@@ -103,6 +102,7 @@ void App::main_loop() {
     float accumulated_frames = 0.0f;
     float delta_time_to_print_fps = 0.0f;
     while (!should_close()) {
+        // chunk->has_changed = true;
         poll_events();
 
         float now = get_time();

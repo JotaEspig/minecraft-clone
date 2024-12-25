@@ -16,6 +16,9 @@
 
 Frustum Chunk::frustum{};
 
+std::shared_ptr<axolote::gl::Texture> Chunk::texture = nullptr;
+std::shared_ptr<axolote::gl::Shader> Chunk::shader = nullptr;
+
 Chunk::Chunk() :
   Chunk{glm::vec3{0.0f}} {
 }
@@ -26,8 +29,8 @@ Chunk::Chunk(const glm::vec3 &pos) :
         atlas_texture = axolote::gl::Texture::create(
             my_get_path("./resources/textures/atlas1.png"), "diffuse", (GLuint)0
         );
+		texture = atlas_texture;
     }
-    texture = atlas_texture;
 
     vao = axolote::gl::VAO::create();
     vao->bind();
@@ -127,15 +130,15 @@ void Chunk::update_vbos() {
 
 std::vector<std::pair<glm::vec3, Face>> Chunk::get_drawable_faces() const {
     std::vector<std::pair<glm::vec3, Face>> faces;
-    for (int i = 0; i < CHUNK_XZ_SIZE; ++i) {
-        for (int j = 0; j < CHUNK_Y_SIZE; ++j) {
-            for (int k = 0; k < CHUNK_XZ_SIZE; ++k) {
+    for (std::size_t i = 0; i < CHUNK_XZ_SIZE; ++i) {
+        for (std::size_t j = 0; j < CHUNK_Y_SIZE; ++j) {
+            for (std::size_t k = 0; k < CHUNK_XZ_SIZE; ++k) {
                 BlockType block = blocks[i][j][k];
                 if (block == BlockType::AIR) {
                     continue;
                 }
                 glm::vec3 position = glm::vec3{i, j, k};
-                for (int l = 0; l < Face::directions.size(); ++l) {
+                for (std::size_t l = 0; l < Face::directions.size(); ++l) {
                     Face::Direction dir = Face::directions[l];
                     glm::vec3 normal = Face::get_normal_from_direction(dir);
                     bool is_facing_air = false;

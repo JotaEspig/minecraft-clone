@@ -13,9 +13,9 @@
 #include "minecraft/face.hpp"
 #include "minecraft/frustum_cull.hpp"
 
-constexpr unsigned long CHUNK_XZ_SIZE = 16;
-constexpr unsigned long CHUNK_Y_SIZE = 16;
-constexpr unsigned long long CHUNK_MAX_BLOCKS_AMOUNT
+constexpr std::size_t CHUNK_XZ_SIZE = 16;
+constexpr std::size_t CHUNK_Y_SIZE = 16;
+constexpr std::size_t CHUNK_MAX_BLOCKS_AMOUNT
     = CHUNK_XZ_SIZE * CHUNK_Y_SIZE * CHUNK_XZ_SIZE;
 
 // typedef a type for a chunk (3D grid of blocks based on CHUNK_XZ_SIZE)
@@ -33,9 +33,9 @@ public:
     // EBO
     std::shared_ptr<axolote::gl::EBO> ebo;
     // Texture
-    std::shared_ptr<axolote::gl::Texture> texture;
+    static std::shared_ptr<axolote::gl::Texture> texture;
     // Shader
-    std::shared_ptr<axolote::gl::Shader> shader;
+    static std::shared_ptr<axolote::gl::Shader> shader;
     // Instanced Postion
     std::shared_ptr<axolote::gl::VBO> instanced_position_vbo;
     // Instanced Tex Coord
