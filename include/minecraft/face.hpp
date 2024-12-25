@@ -19,7 +19,7 @@ public:
     static const std::vector<GLuint> indices;
     static const std::array<Direction, 6> directions;
 
-    glm::vec3 normal{0.0f};
+    Direction dir = Direction::INVALID;
     glm::vec4 uv{0.0f};
 
     Face();

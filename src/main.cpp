@@ -102,7 +102,6 @@ void App::main_loop() {
     float accumulated_frames = 0.0f;
     float delta_time_to_print_fps = 0.0f;
     while (!should_close()) {
-        // chunk->has_changed = true;
         poll_events();
 
         float now = get_time();

@@ -41,7 +41,7 @@ public:
     // Instanced Tex Coord
     std::shared_ptr<axolote::gl::VBO> instanced_tex_coord_vbo;
     // Instanced normal
-    std::shared_ptr<axolote::gl::VBO> instanced_normal_vbo;
+    std::shared_ptr<axolote::gl::VBO> instanced_direction_vbo;
 
     static Frustum frustum;
 

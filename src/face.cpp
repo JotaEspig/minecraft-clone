@@ -33,13 +33,13 @@ const std::array<Face::Direction, 6> Face::directions = {
 Face::Face() {
 }
 
-Face::Face(BlockType type, Direction dir) {
+Face::Face(BlockType type, Direction dir) :
+  dir{dir} {
     if (type == BlockType::AIR)
         return;
 
     int index = static_cast<int>(type) + static_cast<int>(dir);
     glm::vec4 uv_for_type = get_atlas_mapping_uvs().at(index);
-    normal = get_normal_from_direction(dir);
 
     float width = uv_for_type.z;
     float height = uv_for_type.w;

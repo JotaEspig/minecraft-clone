@@ -3,17 +3,42 @@
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 instanced_position;
 layout(location = 2) in vec4 instanced_tex_coord;
-layout(location = 3) in vec3 instanced_normal;
+layout(location = 3) in int instanced_direction;
 
 out vec2 tex_coord;
 
 uniform mat4 axolote_camera;
 
+vec3 dir2normal(int dir) {
+    if (dir == 0) {
+        return vec3(0.0f, 1.0f, 0.0f);
+    }
+    else if (dir == 1) {
+        return vec3(0.0f, -1.0f, 0.0f);
+    }
+    else if (dir == 2) {
+        return vec3(-1.0f, 0.0f, 0.0f);
+    }
+    else if (dir == 3) {
+        return vec3(1.0f, 0.0f, 0.0f);
+    }
+    else if (dir == 4) {
+        return vec3(0.0f, 0.0f, 1.0f);
+    }
+    else if (dir == 5) {
+        return vec3(0.0f, 0.0f, -1.0f);
+    }
+    else {
+        return vec3(0.0f, 0.0f, 0.0f);
+    }
+
+}
+
 void main() {
     vec3 original_normal = vec3(0.0f, 0.0f, 1.0f);
 
     // Normalize the instance normal
-    vec3 target_normal = normalize(instanced_normal);
+    vec3 target_normal = dir2normal(instanced_direction);
 
     // Compute the rotation axis and angle
     vec3 rotation_axis = cross(original_normal, target_normal);
