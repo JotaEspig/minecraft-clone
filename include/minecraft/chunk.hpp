@@ -11,19 +11,31 @@
 #include <glm/glm.hpp>
 
 #include "minecraft/face.hpp"
-#include "minecraft/frustum_cull.hpp"
 
-constexpr std::size_t CHUNK_XZ_SIZE = 16;
-constexpr std::size_t CHUNK_Y_SIZE = 16;
+constexpr std::size_t CHUNK_SIZE = 16;
 constexpr std::size_t CHUNK_MAX_BLOCKS_AMOUNT
-    = CHUNK_XZ_SIZE * CHUNK_Y_SIZE * CHUNK_XZ_SIZE;
+    = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
 
-// typedef a type for a chunk (3D grid of blocks based on CHUNK_XZ_SIZE)
+// typedef a type for a chunk (3D grid of blocks based on CHUNK_SIZE)
 
 class Chunk : public axolote::Drawable {
 public:
+    // coordinates in integer, x=1 means x=1 * CHUNK_SIZE, y=1 means y=1 *
+    // CHUNK_SIZE, z=1 means z=1 * CHUNK_SIZE
+    class Coord {
+    public:
+        struct Compare {
+            bool operator()(const Coord &a, const Coord &b) const;
+        };
+
+        std::int64_t x, y, z;
+        Coord(std::int64_t x, std::int64_t y, std::int64_t z);
+        bool operator==(const Coord &other) const;
+    };
+
     typedef std::array<
-        std::array<std::array<BlockType, CHUNK_XZ_SIZE>, CHUNK_Y_SIZE>, CHUNK_XZ_SIZE>
+        std::array<std::array<BlockType, CHUNK_SIZE>, CHUNK_SIZE>,
+        CHUNK_SIZE>
         Grid;
 
     // VAO
@@ -43,15 +55,13 @@ public:
     // Instanced normal
     std::shared_ptr<axolote::gl::VBO> instanced_direction_vbo;
 
-    static Frustum frustum;
-
     glm::vec3 pos{0.0f};
     long long faces_to_draw_amount = 0;
     bool has_changed = true;
     Grid blocks;
 
     Chunk();
-    Chunk(const glm::vec3 &pos);
+    Chunk(const Coord &coord);
 
     void update_vbos();
     std::vector<std::pair<glm::vec3, Face>> get_drawable_faces() const;
@@ -62,4 +72,13 @@ public:
     void update(double dt) override;
     void draw() override;
     void draw(const glm::mat4 &mat) override;
+};
+
+template <>
+struct std::hash<Chunk::Coord> {
+    std::size_t operator()(const Chunk::Coord &coord) const {
+        return std::hash<std::int64_t>()(coord.x)
+               ^ std::hash<std::int64_t>()(coord.y)
+               ^ std::hash<std::int64_t>()(coord.z);
+    }
 };

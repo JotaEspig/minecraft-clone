@@ -64,12 +64,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(
     SOURCE_FILES
+    ${SOURCE_DIR}/app.cpp
     ${SOURCE_DIR}/atlas_mapping_uvs.cpp
-    
     ${SOURCE_DIR}/chunk.cpp
     ${SOURCE_DIR}/face.cpp
     ${SOURCE_DIR}/main.cpp
     ${SOURCE_DIR}/utils.cpp
+	${SOURCE_DIR}/world.cpp
 )
 
 # Adding executables

@@ -7,30 +7,62 @@
 #include "axolote/gl/vbo.hpp"
 #include "axolote/glad/glad.h"
 #include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/norm.hpp>
 
 #include "minecraft/atlas_mapping_uvs.hpp"
 #include "minecraft/chunk.hpp"
 #include "minecraft/face.hpp"
-#include "minecraft/frustum_cull.hpp"
 #include "minecraft/utils.hpp"
-
-Frustum Chunk::frustum{};
 
 std::shared_ptr<axolote::gl::Texture> Chunk::texture = nullptr;
 std::shared_ptr<axolote::gl::Shader> Chunk::shader = nullptr;
 
-Chunk::Chunk() :
-  Chunk{glm::vec3{0.0f}} {
+bool Chunk::Coord::Compare::operator()(
+    const Chunk::Coord &a, const Chunk::Coord &b
+) const {
+    glm::vec3 vec_a = glm::vec3{a.x, a.y, a.z};
+    glm::vec3 vec_b = glm::vec3{b.x, b.y, b.z};
+    float length_a = glm::length2(vec_a);
+    float length_b = glm::length2(vec_b);
+    if (length_a != length_b) {
+        return length_a < length_b;
+    }
+
+    // Secondary criteria: Compare x, y, and z
+    if (std::abs(a.x) != std::abs(b.x)) {
+        return std::abs(a.x) < std::abs(b.x);
+    }
+    if (std::abs(a.y) != std::abs(b.y)) {
+        return std::abs(a.y) < std::abs(b.y);
+    }
+    return std::abs(a.z) < std::abs(b.z);
 }
 
-Chunk::Chunk(const glm::vec3 &pos) :
-  pos{pos} {
+Chunk::Coord::Coord(std::int64_t x, std::int64_t y, std::int64_t z) :
+  x{x},
+  y{y},
+  z{z} {
+}
+
+bool Chunk::Coord::operator==(const Coord &other) const {
+    return x == other.x && y == other.y && z == other.z;
+}
+
+Chunk::Chunk() :
+  Chunk{Coord{0, 0, 0}} {
+}
+
+Chunk::Chunk(const Coord &coord) {
     if (atlas_texture == nullptr) {
         atlas_texture = axolote::gl::Texture::create(
             my_get_path("./resources/textures/atlas1.png"), "diffuse", (GLuint)0
         );
         texture = atlas_texture;
     }
+
+    pos = glm::vec3{coord.x, coord.y, coord.z};
+    pos *= glm::vec3{CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE};
 
     vao = axolote::gl::VAO::create();
     vao->bind();
@@ -85,9 +117,6 @@ Chunk::Chunk(const glm::vec3 &pos) :
 }
 
 void Chunk::update_vbos() {
-    glm::vec3 chunk_pos
-        = glm::vec3{CHUNK_XZ_SIZE, CHUNK_Y_SIZE, CHUNK_XZ_SIZE} * pos;
-
     std::vector<glm::vec3> instanced_positions;
     std::vector<glm::vec4> instanced_tex_coords;
     std::vector<int> instanced_directions;
@@ -96,8 +125,7 @@ void Chunk::update_vbos() {
         = get_drawable_faces();
     for (const auto &[block_pos, face] : drawable_faces) {
         instanced_positions.push_back(
-            chunk_pos + block_pos
-            + Face::get_normal_from_direction(face.dir) * 0.5f
+            pos + block_pos + Face::get_normal_from_direction(face.dir) * 0.5f
         );
         instanced_tex_coords.push_back(face.uv);
         instanced_directions.push_back(static_cast<int>(face.dir));
@@ -127,9 +155,9 @@ void Chunk::update_vbos() {
 
 std::vector<std::pair<glm::vec3, Face>> Chunk::get_drawable_faces() const {
     std::vector<std::pair<glm::vec3, Face>> faces;
-    for (std::size_t i = 0; i < CHUNK_XZ_SIZE; ++i) {
-        for (std::size_t j = 0; j < CHUNK_Y_SIZE; ++j) {
-            for (std::size_t k = 0; k < CHUNK_XZ_SIZE; ++k) {
+    for (std::size_t i = 0; i < CHUNK_SIZE; ++i) {
+        for (std::size_t j = 0; j < CHUNK_SIZE; ++j) {
+            for (std::size_t k = 0; k < CHUNK_SIZE; ++k) {
                 BlockType block = blocks[i][j][k];
                 if (block == BlockType::AIR) {
                     continue;
@@ -142,9 +170,9 @@ std::vector<std::pair<glm::vec3, Face>> Chunk::get_drawable_faces() const {
                     int i2 = i + normal.x;
                     int j2 = j + normal.y;
                     int k2 = k + normal.z;
-                    bool passed_array_bounds = i2 < 0 || i2 >= CHUNK_XZ_SIZE
-                                               || j2 < 0 || j2 >= CHUNK_Y_SIZE
-                                               || k2 < 0 || k2 >= CHUNK_XZ_SIZE;
+                    bool passed_array_bounds = i2 < 0 || i2 >= CHUNK_SIZE
+                                               || j2 < 0 || j2 >= CHUNK_SIZE
+                                               || k2 < 0 || k2 >= CHUNK_SIZE;
                     if (passed_array_bounds) {
                         is_facing_air = true;
                     }
@@ -178,14 +206,6 @@ void Chunk::update(double dt) {
 }
 
 void Chunk::draw() {
-    glm::vec3 minp
-        = pos * glm::vec3{CHUNK_XZ_SIZE, CHUNK_Y_SIZE, CHUNK_XZ_SIZE};
-    glm::vec3 maxp
-        = minp + glm::vec3{CHUNK_XZ_SIZE, CHUNK_Y_SIZE, CHUNK_XZ_SIZE};
-    if (!frustum.IsBoxVisible(minp, maxp)) {
-        return;
-    }
-
     shader->use();
     texture->bind();
     texture->activate();
