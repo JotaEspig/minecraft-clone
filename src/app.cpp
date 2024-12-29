@@ -65,9 +65,9 @@ void App::main_loop() {
     glLineWidth(2.0f);
 
     world = std::make_shared<World>();
-    world->render_distance = 12;
-    for (std::int64_t i = 0; i < 32; ++i) {
-        for (std::int64_t j = 0; j < 32; ++j) {
+    world->render_distance = 8;
+    for (std::int64_t i = -16; i < 16; ++i) {
+        for (std::int64_t j = -16; j < 16; ++j) {
             world->load_chunk({i, -1, j});
         }
     }
@@ -114,7 +114,7 @@ void App::imgui() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::SetNextWindowSize(ImVec2(400, 90), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
     ImGui::Begin("Controls");
 
     ImGui::SliderFloat(
@@ -124,6 +124,7 @@ void App::imgui() {
     ImGui::SliderFloat(
         "Camera Speed", &current_scene()->context->camera.speed, 0.0f, 100.0f
     );
+    ImGui::InputInt("Render Distance", (int*)(&world->render_distance));
 
     ImGui::End();
 

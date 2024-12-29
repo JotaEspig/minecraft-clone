@@ -30,13 +30,13 @@ bool Chunk::Coord::Compare::operator()(
     }
 
     // Secondary criteria: Compare x, y, and z
-    if (std::abs(a.x) != std::abs(b.x)) {
-        return std::abs(a.x) < std::abs(b.x);
+    if (a.x != b.x) {
+        return a.x < b.x;
     }
-    if (std::abs(a.y) != std::abs(b.y)) {
-        return std::abs(a.y) < std::abs(b.y);
+    if (a.y != b.y) {
+        return a.y < b.y;
     }
-    return std::abs(a.z) < std::abs(b.z);
+    return a.z < b.z;
 }
 
 Chunk::Coord::Coord(std::int64_t x, std::int64_t y, std::int64_t z) :

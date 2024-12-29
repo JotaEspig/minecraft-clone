@@ -1,5 +1,5 @@
-#include <memory>
 #include <iostream>
+#include <memory>
 #include <random>
 
 #include "axolote/gl/shader.hpp"
@@ -75,7 +75,14 @@ void World::update(double dt) {
 
 void World::draw() {
     for (auto &chunk : chunks) {
-        float distance = distance_to_player(chunk.second->pos);
+        // uses middle position of the chunk to calculate the distance
+        // because chunk.pos is at the start of the chunk, so sometimes it
+        // causes some inconsistency. So middle pos is there to improve the
+        // accuracy of the render distance limit
+        glm::vec3 middle_pos_of_chunk
+            = chunk.second->pos
+              + glm::vec3{CHUNK_SIZE / 2, CHUNK_SIZE / 2, CHUNK_SIZE / 2};
+        float distance = distance_to_player(middle_pos_of_chunk);
         if (distance > (render_distance * CHUNK_SIZE)) {
             continue;
         }

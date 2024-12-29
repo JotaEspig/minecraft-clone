@@ -13,7 +13,7 @@ public:
     static Frustum frustum;
 
     glm::vec3 player_pos{0.0f};
-    std::uint16_t render_distance = 6;
+    std::uint32_t render_distance = 6;
     std::map<Chunk::Coord, std::shared_ptr<Chunk>, Chunk::Coord::Compare>
         chunks;
 
