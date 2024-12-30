@@ -92,7 +92,7 @@ void World::draw() {
 
         // distance < 2 ensures that the closest chunks to the players is
         // rendered to avoid visual bugs
-        if (distance < 2 || frustum.IsBoxVisible(minp, maxp)) {
+        if (distance < 2 * CHUNK_SIZE || frustum.IsBoxVisible(minp, maxp)) {
             chunk.second->draw();
         }
     }

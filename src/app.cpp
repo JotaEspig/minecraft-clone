@@ -110,12 +110,17 @@ void App::main_loop() {
 }
 
 void App::imgui() {
+    GLboolean srgb_is_enabled = glIsEnabled(GL_FRAMEBUFFER_SRGB);
+    if (srgb_is_enabled) {
+        glDisable(GL_FRAMEBUFFER_SRGB);
+    }
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
     ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Controls");
+    ImGui::Begin("Config");
 
     ImGui::SliderFloat(
         "Mouse Sensitivity", &current_scene()->context->camera.sensitivity,
@@ -124,10 +129,14 @@ void App::imgui() {
     ImGui::SliderFloat(
         "Camera Speed", &current_scene()->context->camera.speed, 0.0f, 100.0f
     );
-    ImGui::InputInt("Render Distance", (int*)(&world->render_distance));
+    ImGui::InputInt("Render Distance", (int *)(&world->render_distance));
 
     ImGui::End();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    if (srgb_is_enabled) {
+        glEnable(GL_FRAMEBUFFER_SRGB);
+    }
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <memory>
 
 #include "axolote/drawable.hpp"
@@ -14,7 +14,7 @@ public:
 
     glm::vec3 player_pos{0.0f};
     std::uint32_t render_distance = 6;
-    std::map<Chunk::Coord, std::shared_ptr<Chunk>, Chunk::Coord::Compare>
+    std::unordered_map<Chunk::Coord, std::shared_ptr<Chunk>>
         chunks;
 
     World();

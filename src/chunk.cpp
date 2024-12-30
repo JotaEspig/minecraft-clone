@@ -18,27 +18,6 @@
 std::shared_ptr<axolote::gl::Texture> Chunk::texture = nullptr;
 std::shared_ptr<axolote::gl::Shader> Chunk::shader = nullptr;
 
-bool Chunk::Coord::Compare::operator()(
-    const Chunk::Coord &a, const Chunk::Coord &b
-) const {
-    glm::vec3 vec_a = glm::vec3{a.x, a.y, a.z};
-    glm::vec3 vec_b = glm::vec3{b.x, b.y, b.z};
-    float length_a = glm::length2(vec_a);
-    float length_b = glm::length2(vec_b);
-    if (length_a != length_b) {
-        return length_a < length_b;
-    }
-
-    // Secondary criteria: Compare x, y, and z
-    if (a.x != b.x) {
-        return a.x < b.x;
-    }
-    if (a.y != b.y) {
-        return a.y < b.y;
-    }
-    return a.z < b.z;
-}
-
 Chunk::Coord::Coord(std::int64_t x, std::int64_t y, std::int64_t z) :
   x{x},
   y{y},

@@ -24,10 +24,6 @@ public:
     // CHUNK_SIZE, z=1 means z=1 * CHUNK_SIZE
     class Coord {
     public:
-        struct Compare {
-            bool operator()(const Coord &a, const Coord &b) const;
-        };
-
         std::int64_t x, y, z;
         Coord(std::int64_t x, std::int64_t y, std::int64_t z);
         bool operator==(const Coord &other) const;
